@@ -9,7 +9,7 @@ namespace PlanYourHeist
         {
             Console.WriteLine("Plan Your Heist!");
 
-            List<Dictionary<string, string>> team = new List<Dictionary<string, string>>();
+            List<TeamMember> team = new List<TeamMember>();
 
             Console.Write("Bank Difficulty> ");
             int bankDifficulty = int.Parse(Console.ReadLine());
@@ -27,11 +27,11 @@ namespace PlanYourHeist
                 Console.Write("Courage factor> ");
                 string courageFactor = Console.ReadLine();
 
-                Dictionary<string, string> member = new Dictionary<string, string>() {
-                {"Name", name},
-                {"SkillLevel", skillLevel},
-                {"CourageFactor", courageFactor}
-            };
+                TeamMember member = new TeamMember();
+                member.Name = name;
+                member.SkillLevel = int.Parse(skillLevel);
+                member.CourageFactor = double.Parse(courageFactor);
+
                 team.Add(member);
 
                 Console.WriteLine();
@@ -51,16 +51,12 @@ namespace PlanYourHeist
             // Determine total skill level of the team and compare it to the bank's difficulty level
             int teamSkill = 0;
 
-            foreach (Dictionary<string, string> member in team)
+            foreach (TeamMember member in team)
             {
-                string skillLevel = member["SkillLevel"];
-                teamSkill = teamSkill + int.Parse(skillLevel);
+                teamSkill += member.SkillLevel;
             }
 
-            Dictionary<string, int> report = new Dictionary<string, int>(){
-              {"Successes", 0},
-              {"Failures", 0}
-            };
+            HeistReport report = new HeistReport();
 
             for (int i = 0; i < trialRunCount; i++)
             {
@@ -74,35 +70,21 @@ namespace PlanYourHeist
 
                 if (trialRunBankDifficulty > teamSkill)
                 {
-                    // Console.WriteLine("Your heist will fail");
-                    report["Failures"] += 1;
+                    report.FailureCount++;
                 }
                 else
                 {
-                    // Console.WriteLine("Your heist will succeed");
-                    report["Successes"] += 1;
+                    report.SuccessCount++;
                 }
 
                 Console.WriteLine("---------------------------");
             }
 
+            Console.WriteLine();
             Console.WriteLine("Heist Results:");
-            foreach (KeyValuePair<string, int> kvp in report)
-            {
-                Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-            }
+            Console.WriteLine($"Successes: {report.SuccessCount}");
+            Console.WriteLine($"Failures: {report.FailureCount}");
             Console.WriteLine("---------------------------");
-
-            // To display team member info:
-            // Console.WriteLine("Team Members");
-            // foreach (Dictionary<string, string> member in team)
-            // {
-            //   Console.WriteLine("------------------------------------");
-            //   foreach (KeyValuePair<string, string> kvp in member)
-            //   {
-            //     Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-            //   }
-            // }
         }
     }
 }
